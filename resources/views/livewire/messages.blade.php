@@ -13,7 +13,7 @@
                             @foreach($users as $user)
                                 <a wire:click="getUser( {{ $user->id }} )" class="text-dark link">
                                     <li class="list-group-item d-flex">
-                                        <img class="img-fluid avatar" src="https://cdn.pixabay.com/photo/2017/06/13/12/53/profile-2398782_1280.png">
+                                        <img class="img-fluid avatar" src=" {{ asset('images/bighead.png') }} ">
                                         
                                         <div class="d-flex align-items-center ml-2">
                                             <div class="mr-2"><i class="fa fa-circle text-success online-icon mr-1"></i>{{ $user->name }}</div>
