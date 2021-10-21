@@ -10,22 +10,30 @@
                     <div class="card-body chatbox p-0">
                         <ul class="list-group list-group-flush">
                           
-                            @foreach($users as $user)
-                                <a wire:click="getUser( {{ $user->id }} )" class="text-dark link">
-                                    <li class="list-group-item d-flex">
-                                        <img class="img-fluid avatar" src=" {{ asset('images/bighead.png') }} ">
+                        @foreach($users as $user)
+
+                        @if($user->id !== auth()->id())
+                        @php
+                            $unread= App\Models\Message::where('user_id',$user->id)->where('receiver_id',auth()->id())->where('is_seen',false)->get() ?? null
+
+                        @endphp
+                            <a wire:click="getUser({{$user->id}})"  class="text-dark link">
+                                <li class="list-group-item">
+                                    <img class="img-fluid avatar" src="https://cdn.pixabay.com/photo/2017/06/13/12/53/profile-2398782_1280.png">
+                                    @if($user->is_online==true)
+
+                                    <i class="fa fa-circle text-success online-icon">
+                                        @endif
                                         
-                                        <div class="d-flex align-items-center ml-2">
-                                            <div class="mr-2"><i class="fa fa-circle text-success online-icon mr-1"></i>{{ $user->name }}</div>
+                                    </i> {{$user->name}}
 
-
-                                            <div class="badge badge-success-rounded">30</div>
-                                        </div>
-                                             
-                                         
-                                    </li>
-                                </a>
-                            @endforeach
+                                    @if(filled($unread))
+                                        <div class="badge badge-success rounded"> {{ $unread->count()}} </div>
+                                        @endif
+                                </li>
+                            </a>
+                            @endif
+                        @endforeach
                                 
                         </ul>
                     </div>
@@ -39,15 +47,16 @@
                         {{$sender->name}} 
                     @endif
                 </div>
-                <div class="card-body message-box">
-                   
-                            <div class="single-message">
-                                <p class="font-weight-bolder my-0">Name</p>
-                                    Message
-                                <br><small class="text-muted w-100">Sent <em></em></small>
-                            </div>
-
-                            
+                <div class="card-body message-box" wire:poll.500ms="dataMount">
+                    @if(filled($allmessages))
+                        @foreach($allmessages as $msg)
+                                    <div class="single-message @if($msg->user_id == auth()->id()) sent @else received @endif">
+                                        <p class="font-weight-bolder my-0">{{ $msg->user->name }}</p>
+                                            {{ $msg->message }}
+                                        <br><small class="text-muted w-100">Sent <em>{{ $msg->created_at->format('m-d H:i'); }}</em></small>
+                                    </div>
+                            @endforeach
+                    @endif         
                         
                 </div>
                  

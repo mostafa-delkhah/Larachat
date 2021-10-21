@@ -15,4 +15,9 @@ class Message extends Model
         'receiver_id',
         'is_seen',
     ];
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 }
